@@ -1,5 +1,5 @@
 from llms.llm_provider import LLMProvider
-from utils.prompt_loader import PromptLoader
+from llms.prompt_loader import PromptLoader
 
 
 class GenerateScript:

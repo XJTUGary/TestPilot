@@ -1,6 +1,5 @@
 import unittest
 from generate_script import GenerateScript
-from utils.utils import Utils
 
 
 class TestGenerateScript(unittest.TestCase):
