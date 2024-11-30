@@ -1,0 +1,4 @@
+{
+    "PLAYWRIGHT_CODE_SYSTEM_PROMPT": "You are an assistant that generates Playwright code.",
+    "STEP_TO_PLAYWRIGHT_CODE_PROMPT": "Based on this plan, generate Playwright code running in headless mode.\n\nMake sure all the code is in a single file and only provide the code info.\nContent:\n```{STEP_TEXT}```"
+}
