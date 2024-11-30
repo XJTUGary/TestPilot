@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+from create_task import CreateTask
 
 with st.sidebar:
     selected = option_menu(
@@ -17,7 +18,7 @@ with st.sidebar:
 
 
 if selected == "Create Task":
-    st.subheader(f"**You Have selected {selected}**")
+    CreateTask().view()
 
 if selected == "Task List":
     st.subheader(f"**You Have selected {selected}**")
