@@ -6,3 +6,6 @@ playwright==1.49.0
 
 #llm
 langchain-google-genai==2.0.6
+
+#utils
+ipython==8.30.0
