@@ -11,8 +11,8 @@ class TestGenerateTestCases(unittest.TestCase):
         generate_test_cases  = GenerateTestCases()
 
         # 输入 url, user_prompt
-        # url = "https://www.baidu.com"
-        url = "https://www.youtube.com"
+        url = "https://www.baidu.com"
+        # url = "https://www.youtube.com"
         user_prompt = ""
 
         # 调用
