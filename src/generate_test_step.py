@@ -23,7 +23,7 @@ class GenerateTestStep:
                 ("human", prompt),
             ]
             response = self.llm_provider.llm.invoke(messages)
-            return response if response else "Failed to generate test steps."
+            return response.content if response else "Failed to generate test steps."
         except Exception as e:
             print(f"Error in case2step: {e}")
             return f"Error: {e}"

@@ -35,7 +35,7 @@ class GenerateScript:
                 ("human", prompt),
             ]
             response = self.llm_provider.llm.invoke(messages)
-            return response if response else "Failed to generate Playwright code."
+            return response.content if response else "Failed to generate Playwright code."
         except Exception as e:
             print(f"Error in plan2code: {e}")
             return f"Error: {e}"
