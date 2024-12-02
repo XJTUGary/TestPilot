@@ -1,6 +1,6 @@
 import streamlit as st
-from streamlit_option_menu import option_menu
-from create_task import CreateTask
+# from streamlit_option_menu import option_menu
+# from create_task import CreateTask
 
 pg = st.navigation(
     [st.Page("create_task.py"),
@@ -10,10 +10,11 @@ pg = st.navigation(
 pg.run()
 
 with st.sidebar:
-    st.header("Test Pilot")
-    st.page_link("create_task.py", label="Create Task")
-    st.page_link("task_lists.py", label="Task List")
-    st.page_link("settings.py", label="Settings")
+    st.header("🐞 Test Pilot")
+    st.divider()
+    st.page_link("create_task.py", label="Create Task", icon="➕")
+    st.page_link("task_lists.py", label="Task List", icon="🔍")
+    st.page_link("settings.py", label="Settings", icon="⚙️")
     # selected = option_menu(
     #     menu_title="Test Pilot",
     #     options=["Create Task", "Task List", "Settings"],
