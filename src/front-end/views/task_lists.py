@@ -1,9 +1,8 @@
 import streamlit as st
 import requests
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 
-# Mock 数据和 API 数据获取逻辑
 @st.cache_data
 def fetch_tasks() -> List[Dict]:
     """
@@ -22,48 +21,12 @@ def fetch_tasks() -> List[Dict]:
 
 # Mock data for local testing
 mock_data = [
-    {
-        "id": "674aaf22c2978c23ab85e541",
-        "task_name": "task1",
-        "description": "test",
-        "prompt": "",
-        "parameters": "test",
-        "status": "running",
-        "test_plan": "",
-        "test_script": "",
-        "url": "http://www.baidu.com",
-        "html_code": "",
-        "created_time": ""
-    },
-    {
-        "id": "674bfa19f8c9847521e3a77f",
-        "task_name": "task2",
-        "description": "test",
-        "prompt": "",
-        "parameters": "test",
-        "status": "success",
-        "test_script": "",
-        "url": "http://www.baidu.com",
-        "html_code": "",
-        "created_time": ""
-    },
-    {
-        "id": "674bfa19f8c9847521e3a70f",
-        "task_name": "task3",
-        "description": "test",
-        "prompt": "",
-        "parameters": "test",
-        "status": "failed",
-        "test_plan": "",
-        "test_script": "",
-        "url": "http://www.baidu.com",
-        "html_code": "",
-        "created_time": ""
-    }
+    {"id": "674aaf22c2978c23ab85e541", "task_name": "Task 1", "status": "running", "url": "http://example.com", "description": "Test description"},
+    {"id": "674bfa19f8c9847521e3a77f", "task_name": "Task 2", "status": "success", "url": "http://example.com", "description": "Another test"},
+    {"id": "674bfa19f8c9847521e3a70f", "task_name": "Task 3", "status": "failed", "url": "http://example.com", "description": "Failure case"},
 ]
 
-# Replace with actual API fetching if needed
-all_tasks = mock_data  # Replace with fetch_tasks()
+all_tasks = mock_data
 
 
 class TaskLists:
@@ -72,7 +35,6 @@ class TaskLists:
     """
 
     def __init__(self):
-        # Initialize session state variables
         st.session_state.setdefault("view", "list")
         st.session_state.setdefault("current_task", None)
 
@@ -80,95 +42,90 @@ class TaskLists:
         """
         Render the main view based on the current session state.
         """
-        content = st.container()
-
         if st.session_state["view"] == "list":
-            with content:
-                self.display_task_list_view()
+            self.display_task_list_view()
         else:
-            with content:
-                task = st.session_state["current_task"]
-                if task:
-                    self.display_task_detail_view(task)
-                else:
-                    st.error("No task selected.")
+            task = st.session_state["current_task"]
+            if task:
+                self.display_task_detail_view(task)
+            else:
+                st.error("No task selected.")
 
     def display_task_list_view(self):
         """
         Display the task list view with tabs for all tasks, running tasks, and completed tasks.
         """
-        st.title("Task List")
-        tabs = st.tabs(["All Tasks", "Running Tasks", "Completed Tasks"])
+        st.title("📝 Task Management Dashboard")
 
-        # Filter tasks by status
+        tabs = st.tabs(["📋 All Tasks", "⚙️ Running Tasks", "✅ Completed Tasks"])
+
+        # Filter tasks
         running_tasks = [t for t in all_tasks if t["status"] == "running"]
         completed_tasks = [t for t in all_tasks if t["status"] != "running"]
 
-        # Display task lists under tabs
+        # Display tasks in each tab
         with tabs[0]:
-            self.display_task_list(all_tasks, "all-tasks")
+            self.render_task_table("All", all_tasks)
         with tabs[1]:
-            self.display_task_list(running_tasks, "running-tasks")
+            self.render_task_table("Running", running_tasks)
         with tabs[2]:
-            self.display_task_list(completed_tasks, "completed-tasks")
+            self.render_task_table("Completed", completed_tasks)
 
-    def display_task_list(self, tasks: List[Dict], prefix: str):
+    def render_task_table(self, status: str, tasks: List[Dict]):
         """
-        Display a list of tasks with details and actions.
+        Display tasks in a table layout with action buttons.
+        """
+        if not tasks:
+            st.info("No tasks available.")
+            return
 
-        :param tasks: List of tasks to display.
-        :param prefix: Unique prefix for button keys to avoid conflicts.
-        """
         for task in tasks:
-            cols = st.columns([3, 4, 2, 1])  # Layout for task details
-            cols[0].write(task["task_name"])  # Task name
-            cols[1].write(task["url"])  # Task URL
-            cols[2].write(task["status"])  # Task status
-            if cols[3].button("Details", key=f"{prefix}-view-{task['id']}"):
-                # Set the current task and switch to detail view
-                st.session_state["current_task"] = task
-                st.session_state["view"] = "detail"
-                st.rerun()
+            with st.form(key=f"task-{status}-{task['id']}"):
+                cols = st.columns([3, 4, 2, 2])  # Layout for task details
+                cols[0].markdown(f"**Task Name**: {task['task_name']}")
+                cols[1].markdown(f"**URL**: [{task['url']}]({task['url']})")
+                cols[2].markdown(f"**Status**: `{task['status']}`")
+                cols[3].form_submit_button("Details", on_click=self.select_task, args=(task,))
+
+            st.divider()
+
+    def select_task(self, task: Dict):
+        """
+        Set the selected task and switch to detail view.
+        """
+        st.session_state["current_task"] = task
+        st.session_state["view"] = "detail"
+        st.rerun()
 
     def display_task_detail_view(self, task: Dict):
         """
-        Display the task detail view with tabs for different sections.
-
-        :param task: Task details to display.
+        Display task details with tabs for additional information.
         """
-        if st.button("Back"):
+        st.title(f"📄 Task Details - {task['task_name']}")
+
+        if st.button("🔙 Back to Task List"):
             st.session_state["view"] = "list"
             st.session_state["current_task"] = None
             st.rerun()
 
-        tabs = st.tabs(["Main", "HTML Code", "Test Plan", "Test Script"])
+        # Tabs for different sections
+        tabs = st.tabs(["🔍 Overview", "💻 HTML Code", "📝 Test Plan", "📜 Test Script"])
+
         with tabs[0]:
-            self.display_task_main_info(task)
+            st.subheader("General Information")
+            st.write(f"- **Task Name**: {task['task_name']}")
+            st.write(f"- **URL**: [{task['url']}]({task['url']})")
+            st.write(f"- **Status**: `{task['status']}`")
+            st.write(f"- **Description**: {task['description']}")
+
         with tabs[1]:
-            self.display_html_code()
+            st.subheader("HTML Code")
+            st.text_area("HTML Code", "Placeholder for HTML code...", height=200)
+
         with tabs[2]:
-            self.display_test_plan()
+            st.subheader("Test Plan")
+            st.text_area("Test Plan", "Placeholder for test plan...", height=200)
+
         with tabs[3]:
-            self.display_test_script()
-
-    def display_task_main_info(self, task: Dict):
-        """
-        Display the main information of a task.
-
-        :param task: Task details to display.
-        """
-        st.header(f"Task: {task['task_name']}")
-        st.write(f"URL: {task['url']}")
-        st.write(f"Status: {task['status']}")
-
-    def display_html_code(self):
-        """Placeholder for displaying HTML code."""
-        st.write("HTML Code Content")
-
-    def display_test_plan(self):
-        """Placeholder for displaying the test plan."""
-        st.write("Test Plan Content")
-
-    def display_test_script(self):
-        """Placeholder for displaying the test script."""
-        st.write("Test Script Content")
+            st.subheader("Test Script")
+            st.text_area("Test Script", "Placeholder for test script...", height=200)
