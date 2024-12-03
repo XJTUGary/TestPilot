@@ -20,7 +20,7 @@ with st.form(key='task_form', clear_on_submit=True, border=False):
                                   help="Provide any parameters for the task (e.g., key=value pairs)")
 
     # Submit button inside form
-    submit_button = st.form_submit_button("Create Task")
+    submit_button = st.form_submit_button("Create Task", type="primary")
     # Create an empty placeholder for success/error message
     status_placeholder = st.empty()
 
