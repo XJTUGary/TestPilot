@@ -18,7 +18,19 @@ def fetch_tasks() -> List[Dict]:
         st.error(f"Failed to fetch tasks: {e}")
         return []
 
-      
+
+def get_test_cases_by_taskid(task_id):
+    url = "http://127.0.0.1:5000/api/case-list"
+    params = {'task_id': task_id}
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        st.error(f"Failed to fetch tasks: {e}")
+        return []
+
+
 # Mock data for local testing
 mock_data = [
     {
@@ -96,7 +108,7 @@ with sync_playwright() as p:
     },
 ]
 
-all_tasks = mock_data # fetch_tasks()
+all_tasks = mock_data  # fetch_tasks()
 
 
 class TaskLists:
@@ -107,6 +119,7 @@ class TaskLists:
     def __init__(self):
         st.session_state.setdefault("view", "list")
         st.session_state.setdefault("current_task", None)
+        st.session_state.setdefault("current_script", " ")
 
     def view(self):
         """
@@ -155,7 +168,7 @@ class TaskLists:
                 cols[0].markdown(f"**Task Name**: {task['task_name']}")
                 cols[1].markdown(f"**URL**: [{task['url']}]({task['url']})")
                 cols[2].markdown(f"**Status**: `{task['status']}`")
-                cols[3].form_submit_button("Details", on_click=self.select_task, args=(task,))
+                cols[3].form_submit_button("View", on_click=self.select_task, args=(task,), type="primary")
 
             st.divider()
 
@@ -180,6 +193,7 @@ class TaskLists:
 
         # Tabs for different sections
         tabs = st.tabs(["🔍 Overview", "💻 HTML Code", "📝 Test Plan", "📜 Test Script"])
+        case_list = get_test_cases_by_taskid(task['id'])
 
         with tabs[0]:
             st.subheader("General Information")
@@ -189,20 +203,29 @@ class TaskLists:
             st.write(f"- **Description**: {task['description']}")
 
         with tabs[1]:
-            #  st.subheader("HTML Code")
-            #  st.text_area("HTML Code", "Placeholder for HTML code...", height=200)
             code = task["http_code"]
             st.code(code, language='cshtml')
 
         with tabs[2]:
-            #  st.subheader("Test Plan")
-            #  st.text_area("Test Plan", "Placeholder for test plan...", height=200)
-            code = task["test_plan"]
-            st.code(code, language='json')
+            code = case_list
+            st.json(code)
 
         with tabs[3]:
-            #  st.subheader("Test Script")
-            #  st.text_area("Test Script", "Placeholder for test script...", height=200)
-            code = task["test_script"]
-            st.code(code, language='python')
+            code_col, case_lists_col = st.columns([5, 2])
+            with code_col:
+                st.code(st.session_state["current_script"], language='python')
+            with case_lists_col:
+                for case in case_list:
+                    with st.container(border=True):
+                        cols = st.columns(2)
+                        cols[0].write(case["test_name"])
+                        cols[1].button("script", key=f"{case['test_name']}", type="primary",
+                                       on_click=self.script_btn, args=(f"{case['script']}",))
+
+    def script_btn(self, script=None):
+        print(script)
+        if script is not None:
+            st.session_state["current_script"] = script
+        else:
+            st.session_state["current_script"] = ""
 
