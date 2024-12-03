@@ -204,16 +204,19 @@ class TaskLists:
 
         with tabs[1]:
             code = task["http_code"]
-            st.code(code, language='cshtml')
+            with st.container(height=500):
+                st.code(code, language='cshtml')
 
         with tabs[2]:
             code = case_list
-            st.json(code)
+            with st.container(height=500):
+                st.json(code)
 
         with tabs[3]:
             code_col, case_lists_col = st.columns([5, 2])
             with code_col:
-                st.code(st.session_state["current_script"], language='python')
+                with st.container(height=500):
+                    st.code(st.session_state["current_script"], language='python')
             with case_lists_col:
                 for case in case_list:
                     with st.container(border=True):
@@ -228,4 +231,3 @@ class TaskLists:
             st.session_state["current_script"] = script
         else:
             st.session_state["current_script"] = ""
-
