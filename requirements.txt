@@ -7,9 +7,10 @@ playwright==1.49.0
 
 #llm
 langchain-google-genai==2.0.6
+langchain==0.3.9
 
 #utils
 ipython==8.30.0
 pillow~=11.0.0
-pandas~=2.2.3
-numpy~=2.1.3
+pydantic==2.10.2
+requests==2.32.3
