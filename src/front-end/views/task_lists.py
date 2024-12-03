@@ -18,15 +18,85 @@ def fetch_tasks() -> List[Dict]:
         st.error(f"Failed to fetch tasks: {e}")
         return []
 
-
+      
 # Mock data for local testing
 mock_data = [
-    {"id": "674aaf22c2978c23ab85e541", "task_name": "Task 1", "status": "running", "url": "http://example.com", "description": "Test description"},
-    {"id": "674bfa19f8c9847521e3a77f", "task_name": "Task 2", "status": "success", "url": "http://example.com", "description": "Another test"},
-    {"id": "674bfa19f8c9847521e3a70f", "task_name": "Task 3", "status": "failed", "url": "http://example.com", "description": "Failure case"},
+    {
+        "id": "674aaf22c2978c23ab85e541",
+        "task_name": "task1",
+        "description": "test",
+        "prompt": "",
+        "parameter": "test",
+        "status": "running",
+        "test_plan": """{
+"test":[
+{
+"id":"1",
+"module_title":"Search Input Functionality"
+}
+]
+}""",
+        "test_script": """import rc
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    page = browser.new_page()
+
+    page.goto('https://www.baidu.com')
+    print(page.title())
+
+    browser.close()""",
+        "url": "http://www.baidu.com",
+        "http_code": """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>简单的 HTML 页面</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    h1 {
+        color: #333;
+    }
+</style>
+</head>
+<body>
+<h1>Hello, World!</h1>
+<p>这是一个简单的 HTML 页面示例。</p>
+</body>
+</html>"""
+    },
+    {
+        "id": "674bfa19f8c9847521e3a77f",
+        "task_name": "task2",
+        "description": "test",
+        "prompt": "",
+        "parameter": "test",
+        "status": "success",
+        "test_plan": "",
+        "test_script": "",
+        "url": "http://www.baidu.com",
+        "http_code": ""
+    },
+    {
+        "id": "674bfa19f8c9847521e3a70f",
+        "task_name": "task3",
+        "description": "test",
+        "prompt": "",
+        "parameter": "test",
+        "status": "failed",
+        "test_plan": "",
+        "test_script": "",
+        "url": "http://www.baidu.com",
+        "http_code": ""
+    },
 ]
 
-all_tasks = mock_data
+all_tasks = mock_data # fetch_tasks()
 
 
 class TaskLists:
@@ -119,13 +189,20 @@ class TaskLists:
             st.write(f"- **Description**: {task['description']}")
 
         with tabs[1]:
-            st.subheader("HTML Code")
-            st.text_area("HTML Code", "Placeholder for HTML code...", height=200)
+            #  st.subheader("HTML Code")
+            #  st.text_area("HTML Code", "Placeholder for HTML code...", height=200)
+            code = task["http_code"]
+            st.code(code, language='cshtml')
 
         with tabs[2]:
-            st.subheader("Test Plan")
-            st.text_area("Test Plan", "Placeholder for test plan...", height=200)
+            #  st.subheader("Test Plan")
+            #  st.text_area("Test Plan", "Placeholder for test plan...", height=200)
+            code = task["test_plan"]
+            st.code(code, language='json')
 
         with tabs[3]:
-            st.subheader("Test Script")
-            st.text_area("Test Script", "Placeholder for test script...", height=200)
+            #  st.subheader("Test Script")
+            #  st.text_area("Test Script", "Placeholder for test script...", height=200)
+            code = task["test_script"]
+            st.code(code, language='python')
+

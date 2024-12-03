@@ -17,14 +17,13 @@ class CreateTask:
             with st.expander("User Story"):
                 # Custom prompt (required)
                 custom_prompt = st.text_area("Custom Prompt", help="Provide a custom prompt for the task")
-
                 # Parameters (optional)
                 parameters = st.text_area("Parameters", height=136,
                                           placeholder="{\n\t\"username\": \"Gary\"\n\t\"password\": \"pwd\"\n}",
                                           help="Provide any parameters for the task (e.g., key=value pairs)")
 
             # Submit button inside form
-            submit_button = st.form_submit_button("Create Task")
+            submit_button = st.form_submit_button("Create Task", type="primary" )
             # Create an empty placeholder for success/error message
             status_placeholder = st.empty()
 
@@ -43,3 +42,4 @@ class CreateTask:
                 # Wait for 2 seconds before clearing the message
                 time.sleep(1.5)
                 status_placeholder.empty()  # Clear the message after a delay
+
